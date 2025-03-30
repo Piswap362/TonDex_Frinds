@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Friend Referral - TON DEX</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary-dark: #006D77;
+            --primary-medium: #1A6E7A;
+            --primary-light: #83C5BE;
+            --accent-color: #FFDDD2;
+            --text-light: #FFFFFF;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-dark);
+            color: var(--text-light);
+            text-align: center;
+            overflow-x: hidden;
+        }
+        
+        .scroll-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 80px;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        
+        .referral-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(131, 197, 190, 0.2);
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .referral-box h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        
+        .referral-input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 2px solid var(--primary-light);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-light);
+            font-size: 16px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .referral-btn {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--accent-color) 100%);
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .referral-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+        
+        .info-section {
+            margin-top: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 18px;
+            border-radius: 12px;
+            line-height: 1.6;
+            border: 1px solid rgba(131, 197, 190, 0.1);
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 12px;
+            flex: 1;
+            margin: 0 5px;
+            border: 1px solid rgba(131, 197, 190, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+            margin: 5px 0;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        
+        .popup {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--accent-color);
+            color: var(--primary-dark);
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            font-size: 16px;
+            font-weight: 600;
+            display: none;
+            z-index: 3000;
+            max-width: 80%;
+            animation: fadeInOut 3s ease-in-out;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 109, 119, 0.9);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(131, 197, 190, 0.3);
+            z-index: 1000;
+            max-width: 400px;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+        
+        .menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            gap: 5px;
+            text-decoration: none;
+            position: relative;
+            padding: 8px 12px;
+            border-radius: 8px;
+            transition: var(--transition);
+            opacity: 0.7;
+            flex: 1;
+        }
+        
+        .menu-btn:hover {
+            opacity: 1;
+            background: rgba(131, 197, 190, 0.1);
+        }
+        
+        .menu-btn i {
+            font-size: 20px;
+        }
+        
+        .menu-btn.active {
+            opacity: 1;
+            font-weight: 600;
+        }
+        
+        .menu-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 3px;
+        }
+        
+        h2 {
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <h2>Friend Referral Program</h2>
+        <p>Invite friends and earn rewards together!</p>
+        
+        <div class="stats-container">
+            <div class="stat-box">
+                <div class="stat-value" id="totalReferrals">0</div>
+                <div class="stat-label">Total Referrals</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="activeReferrals">0</div>
+                <div class="stat-label">Active Users</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="earnedPoints">0</div>
+                <div class="stat-label">Earned Points</div>
+            </div>
+        </div>
+        
+        <div class="referral-box">
+            <h3>Your Referral Link</h3>
+            <input type="text" class="referral-input" id="referralLink" readonly>
+            <button class="referral-btn" onclick="copyToClipboard('referralLink', 'Referral link copied!')">
+                <i class="fas fa-copy"></i> Copy Link
+            </button>
+        </div>
+
+        <div class="referral-box">
+            <h3>Your Invite Code</h3>
+            <input type="text" class="referral-input" id="inviteCode" readonly>
+            <button class="referral-btn" onclick="copyToClipboard('inviteCode', 'Invite code copied!')">
+                <i class="fas fa-copy"></i> Copy Code
+            </button>
+        </div>
+
+        <div class="referral-box">
+            <h3>Enter Friend's Code</h3>
+            <input type="text" class="referral-input" id="enterCode" placeholder="Enter invite code here">
+            <button class="referral-btn" onclick="submitCode()">
+                <i class="fas fa-user-plus"></i> Submit Code
+            </button>
+        </div>
+        
+        <div class="info-section">
+            <h3><i class="fas fa-gift"></i> How It Works</h3>
+            <p>1. Share your referral link with friends</p>
+            <p>2. Earn <strong>20 points</strong> when they sign up</p>
+            <p>3. Get <strong>10 bonus points</strong> when they complete first swap</p>
+            <p>4. Track your referrals and earnings in real-time</p>
+        </div>
+    </div>
+
+    <div class="bottom-menu">
+        <a href="https://piswap362.github.io/Home/" class="menu-btn"><i class="fas fa-home"></i> Home</a>
+        <a href="https://piswap362.github.io/Tasks/" class="menu-btn"><i class="fas fa-tasks"></i> Tasks</a>
+        <a href="https://piswap362.github.io/Friends/" class="menu-btn active"><i class="fas fa-user-friends"></i> Friends</a>
+        <a href="https://piswap362.github.io/Wallet/" class="menu-btn"><i class="fas fa-wallet"></i> Wallet</a>
+    </div>
+
+    <div id="popup" class="popup"></div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Initialize user data if not exists
+            initUserData();
+            
+            // Generate referral link and code
+            generateReferralInfo();
+            
+            // Check for referral in URL
+            checkReferralInURL();
+            
+            // Load referral stats
+            loadReferralStats();
+            
+            // Update points display
+            updatePointsDisplay();
+        });
+
+        // Initialize user data
+        function initUserData() {
+            if (!localStorage.getItem("userId")) {
+                localStorage.setItem("userId", generateUniqueId());
+            }
+            
+            if (!localStorage.getItem("referralStats")) {
+                localStorage.setItem("referralStats", JSON.stringify({
+                    totalReferrals: 0,
+                    activeReferrals: 0,
+                    earnedPoints: 0,
+                    referrals: []
+                }));
+            }
+            
+            if (!localStorage.getItem("points")) {
+                localStorage.setItem("points", "0");
+            }
+        }
+
+        // Generate unique ID for user
+        function generateUniqueId() {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                const r = Math.random() * 16 | 0;
+                const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                return v.toString(16);
+            });
+        }
+
+        // Generate referral information
+        function generateReferralInfo() {
+            const userId = localStorage.getItem("userId");
+            const referralLink = `https://TonDex2025.github.io/Home/?ref=${userId}`;
+            const inviteCode = `TON-${userId.substring(0, 6).toUpperCase()}`;
+            
+            document.getElementById("referralLink").value = referralLink;
+            document.getElementById("inviteCode").value = inviteCode;
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(elementId, message) {
+            const copyText = document.getElementById(elementId);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            showPopup(message);
+            
+            // Log copy action
+            if (elementId === "referralLink") {
+                logReferralAction("link_copied");
+            }
+        }
+
+        // Show popup message
+        function showPopup(message) {
+            const popup = document.getElementById("popup");
+            popup.innerText = message;
+            popup.style.display = "block";
+            setTimeout(() => {
+                popup.style.display = "none";
+            }, 3000);
+        }
+
+        // Submit referral code
+        function submitCode() {
+            const enteredCode = document.getElementById("enterCode").value.trim();
+            const userId = localStorage.getItem("userId");
+            
+            if (!enteredCode) {
+                showPopup("Please enter a valid code!");
+                return;
+            }
+            
+            if (enteredCode === `TON-${userId.substring(0, 6).toUpperCase()}`) {
+                showPopup("You can't use your own code!");
+                return;
+            }
+            
+            if (localStorage.getItem("usedReferralCode")) {
+                showPopup("You've already used a referral code!");
+                return;
+            }
+            
+            // Process the referral
+            processReferral(enteredCode);
+        }
+
+        // Process referral code
+        function processReferral(code) {
+            // Add points to current user
+            let points = parseFloat(localStorage.getItem("points")) || 0;
+            points += 20;
+            localStorage.setItem("points", points);
+            localStorage.setItem("usedReferralCode", code);
+            
+            // Update referrer's stats if this is a valid referral
+            updateReferrerStats(code);
+            
+            showPopup("20 TON DEX points added to your account!");
+            updatePointsDisplay();
+            loadReferralStats();
+            
+            // Update parent window if exists
+            if (window.opener) {
+                window.opener.updatePointsDisplay();
+                window.opener.loadReferralStats();
+            }
+        }
+
+        // Update referrer's stats
+        function updateReferrerStats(referralCode) {
+            // In a real app, this would be done server-side
+            // This is a simplified client-side implementation
+            
+            // Extract userId from referral code
+            const referrerId = referralCode.split('TON-')[1];
+            if (!referrerId) return;
+            
+            // This would normally be an API call to update the referrer's stats
+            console.log(`User ${localStorage.getItem("userId")} was referred by ${referralCode}`);
+        }
+
+        // Check for referral in URL
+        function checkReferralInURL() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const refCode = urlParams.get('ref');
+            
+            if (refCode && !localStorage.getItem("usedReferralCode") && 
+                refCode !== localStorage.getItem("userId")) {
+                
+                localStorage.setItem("pendingReferral", refCode);
+                showPopup("Referral detected! Complete sign up to get your bonus.");
+                
+                // Log the referral visit
+                logReferralAction("referral_visit", refCode);
+            }
+        }
+
+        // Load referral statistics
+        function loadReferralStats() {
+            const stats = JSON.parse(localStorage.getItem("referralStats") || "{}");
+            
+            document.getElementById("totalReferrals").textContent = stats.totalReferrals || 0;
+            document.getElementById("activeReferrals").textContent = stats.activeReferrals || 0;
+            document.getElementById("earnedPoints").textContent = stats.earnedPoints || 0;
+        }
+
+        // Log referral actions
+        function logReferralAction(action, refCode = null) {
+            const logEntry = {
+                action,
+                timestamp: new Date().toISOString(),
+                refCode,
+                userId: localStorage.getItem("userId")
+            };
+            
+            // In a real app, this would be sent to a server
+            console.log("Referral action:", logEntry);
+        }
+
+        // Update points display
+        function updatePointsDisplay() {
+            if (document.getElementById("points")) {
+                const points = parseFloat(localStorage.getItem("points")) || 0;
+                document.getElementById("points").textContent = points;
+            }
+        }
+    </script>
+</body>
+</html>
