@@ -83,43 +83,6 @@
             font-size: 18px;
         }
         
-        .referral-stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 25px;
-            text-align: center;
-        }
-        
-        .stat-box {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            border-radius: 12px;
-            flex: 1;
-            margin: 0 5px;
-            border: 1px solid rgba(131, 197, 190, 0.1);
-        }
-        
-        .stat-value {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--accent-color);
-            margin: 5px 0;
-        }
-        
-        .stat-label {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-        
-        .info-section {
-            margin-top: 25px;
-            background: rgba(255, 255, 255, 0.05);
-            padding: 18px;
-            border-radius: 16px;
-            line-height: 1.6;
-            border: 1px solid rgba(131, 197, 190, 0.1);
-        }
-        
         h2 {
             margin-bottom: 5px;
             font-weight: 600;
@@ -246,13 +209,52 @@
             background-color: var(--accent-color);
             transform: translateY(-2px);
         }
+        
+        .reward-info {
+            background: rgba(255, 221, 210, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .reward-info i {
+            color: var(--accent-color);
+            font-size: 24px;
+        }
+        
+        .verify-btn {
+            background-color: var(--accent-color);
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .verify-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body>
     <div class="scroll-container">
         <div class="referral-section">
-            <h2>Invite Friends & Earn Points</h2>
-            <p>Share your referral link and earn 20 points for each friend who joins</p>
+            <h2>Invite Friends</h2>
+            <p>Share your referral link with friends</p>
+            
+            <div class="reward-info">
+                <i class="fas fa-gift"></i>
+                <p>Referrals will be counted and coins will be distributed based on your referrals</p>
+            </div>
             
             <div class="referral-link-container">
                 <input type="text" id="referralLink" readonly value="http://t.me/TonDex2025Bot?start=ref_">
@@ -261,23 +263,7 @@
                 </button>
             </div>
             
-            <div class="referral-stats">
-                <div class="stat-box">
-                    <div class="stat-value" id="totalReferrals">0</div>
-                    <div class="stat-label">Total Referrals</div>
-                </div>
-                <div class="stat-box">
-                    <div class="stat-value" id="earnedPoints">0</div>
-                    <div class="stat-label">Earned Points</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="info-section">
-            <h3>How it works</h3>
-            <p>1. Share your unique referral link with friends</p>
-            <p>2. When they join using your link, you'll earn 20 points</p>
-            <p>3. Points can be used for rewards in the TON DEX platform</p>
+            <button class="verify-btn">Verify</button>
         </div>
     </div>
     
@@ -314,13 +300,6 @@
             const refId = generateReferralId();
             const referralLink = document.getElementById("referralLink");
             referralLink.value = `http://t.me/TonDex2025Bot?start=ref_${refId}`;
-            
-            // تحميل إحصائيات الإحالة من localStorage
-            const totalReferrals = localStorage.getItem("totalReferrals") || 0;
-            const earnedPoints = localStorage.getItem("earnedPoints") || 0;
-            
-            document.getElementById("totalReferrals").textContent = totalReferrals;
-            document.getElementById("earnedPoints").textContent = earnedPoints;
             
             // نسخ رابط الإحالة
             const copyBtn = document.getElementById("copyBtn");
